@@ -1,4 +1,8 @@
-const API = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? "http://localhost:3000" : "https://natacao-backend.onrender.com";
+const API =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1"
+    ? "http://localhost:3000"
+    : "https://natamentos.onrender.com";
 
 async function cadastrarAluno(event) {
   event.preventDefault();
