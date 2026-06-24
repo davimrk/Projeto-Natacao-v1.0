@@ -3,10 +3,12 @@ const cors = require("cors");
 const mysql = require("mysql2");
 
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "natacao",
+  host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "",
+  database: process.env.DB_NAME || "natacao",
+  port: process.env.DB_PORT || 3306,
+  ssl: process.env.DB_HOST ? {rejectUnauthorized: false} : null
 });
 db.connect((erro) => {
   if (erro) {
@@ -14,6 +16,25 @@ db.connect((erro) => {
   } else {
     console.log("Conectado ao banco de dados MySQL");
   }
+  const createTableQuery = `
+    CREATE TABLE IF NOT EXISTS alunos (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      nome VARCHAR(255) NOT NULL,
+      idade INT,
+      telefone VARCHAR(20),
+      nivel VARCHAR(50),
+      horario VARCHAR(100),
+      ativo boolean default true
+    );
+  `;
+
+  db.query(createTableQuery, (erroTabela) => {
+    if (erroTabela) {
+      console.error("Erro ao criar tabela:", erroTabela);
+    } else {
+      console.log("Tabela 'alunos' criada com sucesso");
+    }
+  });
 });
 
 const app = express();
@@ -172,8 +193,8 @@ app.post("/admin", (req, res) => {
 });
 
 
-
-app.listen(3000, () => {
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
   console.log("Servidor rodando em: ");
-  console.log("http://localhost:3000");
+  console.log(`http://localhost:${PORT}`);
 });
